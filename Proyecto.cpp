@@ -9,25 +9,13 @@ struct Reservacion
     char nit[11];
     char dpi[15];
     char telefono[15];
+    int dias;
     char fechaIngreso[11];
     char fechaSalida[11];
-    int dias;
     int cantidadHabitaciones;
     int habitaciones[50];
     float total;
 };
-
-void mostrarMenu()
-{
-    system("cls");
-    cout << "----- MENU PRINCIPAL -----" << endl
-         << endl;
-    cout << "1. Ingreso de Reservacion" << endl;
-    cout << "2. Busqueda de Reservacion" << endl;
-    cout << "3. Salir" << endl
-         << endl;
-    cout << "Seleccione una opcion: ";
-}
 
 void cargarReservaciones(Reservacion reservaciones[], int &cantidadReservaciones)
 {
@@ -42,9 +30,10 @@ void cargarReservaciones(Reservacion reservaciones[], int &cantidadReservaciones
         archivo.getline(reservaciones[cantidadReservaciones].nit, 15);
         archivo.getline(reservaciones[cantidadReservaciones].dpi, 15);
         archivo.getline(reservaciones[cantidadReservaciones].telefono, 15);
+        archivo >> reservaciones[cantidadReservaciones].dias;
+        archivo.ignore();//nuevametne captura el salto de linea
         archivo.getline(reservaciones[cantidadReservaciones].fechaIngreso, 11);
         archivo.getline(reservaciones[cantidadReservaciones].fechaSalida, 11);
-        archivo >> reservaciones[cantidadReservaciones].dias;
 
         archivo >> reservaciones[cantidadReservaciones].cantidadHabitaciones;
         for (int i = 0; i < reservaciones[cantidadReservaciones].cantidadHabitaciones; i++)
@@ -68,15 +57,15 @@ void guardarReservaciones(Reservacion reservaciones[], int cantidadReservaciones
         archivo << reservaciones[i].nit << endl;
         archivo << reservaciones[i].dpi << endl;
         archivo << reservaciones[i].telefono << endl;
+        archivo << reservaciones[i].dias << endl;
         archivo << reservaciones[i].fechaIngreso << endl;
         archivo << reservaciones[i].fechaSalida << endl;
-        archivo << reservaciones[i].dias << endl;
         archivo << reservaciones[i].cantidadHabitaciones << endl;
         for (int j = 0; j < reservaciones[i].cantidadHabitaciones; j++)
         {
-            archivo << reservaciones[i].habitaciones[j] << " ";
+            archivo << reservaciones[i].habitaciones[j] << endl;
         };
-        archivo <<endl<< reservaciones[i].total << endl;
+        archivo << reservaciones[i].total << endl;
     }
     archivo.close();
 }
@@ -115,7 +104,7 @@ void ingresarReserva(Reservacion reservaciones[], int &cantidadReservaciones)
              << endl;
 
         nuevaReserva.codigo=cantidadReservaciones+1;
-        cout << "\t\t\tCodigo: "<<nuevaReserva.codigo<<endl;
+        cout << "Codigo de reservacion:\t\t"<<nuevaReserva.codigo<<endl;
 
         cout << "Nombre del cliente:\t\t";
         cin.ignore();//Queda guardado un salto de linea en el buffer, con esto se ignora el salto de linea, para que no se salte el ingreso de nombre
@@ -130,14 +119,15 @@ void ingresarReserva(Reservacion reservaciones[], int &cantidadReservaciones)
         cout << "Telefono:\t\t\t";
         cin.getline(nuevaReserva.telefono, 15);
 
+        cout << "Dias de estadia:\t\t";
+        cin >> nuevaReserva.dias;
+        cin.ignore();//Para recibir el salto de linea que queda despues de ingresar el int
+
         cout << "Fecha de Ingreso (DD/MM/AAAA):\t";
         cin.getline(nuevaReserva.fechaIngreso, 11);
 
         cout << "Fecha de Salida (DD/MM/AAAA):\t";
         cin.getline(nuevaReserva.fechaSalida, 11);
-
-        cout << "Dias de estadia:\t\t";
-        cin >> nuevaReserva.dias;
 
         cout << "Cantidad de habitaciones:\t";
         cin >> nuevaReserva.cantidadHabitaciones;
@@ -147,7 +137,7 @@ void ingresarReserva(Reservacion reservaciones[], int &cantidadReservaciones)
              << endl
              << "101\tBasica\t\tQ  250.00" << endl
              << "102\tPremium\t\tQ  500.00" << endl
-             << "103\tDeluxe\t\tQ1,000.00" << endl
+             << "103\tPresidencial\tQ1,000.00" << endl
              << endl;
         if (nuevaReserva.cantidadHabitaciones == 1)
         {
@@ -174,7 +164,7 @@ void ingresarReserva(Reservacion reservaciones[], int &cantidadReservaciones)
 
         // Calcular el total
         nuevaReserva.total = calcularTotal(nuevaReserva);
-        cout << "Total a pagar: \t\t\tQ" << nuevaReserva.total <<".00"<< endl
+        cout << endl << "Total a pagar: \t\t\tQ" << nuevaReserva.total <<".00"<< endl
              << endl;
 
         // Agregar la nueva reservacion al array y actualizar archivo
@@ -182,8 +172,8 @@ void ingresarReserva(Reservacion reservaciones[], int &cantidadReservaciones)
         cantidadReservaciones++;                          // aumenta la variable que contiene la cantidad
         guardarReservaciones(reservaciones, cantidadReservaciones); // manda a guardar el array
 
-        cout << "Reservacion ingresada con exito" << endl
-             << endl;
+        cout << "Reservacion ingresada con exito para el cliente " <<nuevaReserva.nombreCliente<< endl
+             << endl<<endl;
         cout << "Desea hacer otra reservacion?" << endl
              << "0. No" << endl
              << "1. Si" << endl;
@@ -194,14 +184,14 @@ void ingresarReserva(Reservacion reservaciones[], int &cantidadReservaciones)
 
 void resultadosBusqueda(Reservacion reservaciones[], int coincidencia)
 {
-        cout << endl<<"\t\t\tCodigo: "<< reservaciones[coincidencia].codigo << endl;
+        cout << endl<<"Codigo de reservacion:\t\t"<< reservaciones[coincidencia].codigo << endl;
         cout << "Nombre del cliente:\t\t"<< reservaciones[coincidencia].nombreCliente << endl;
         cout << "NIT:\t\t\t\t"<< reservaciones[coincidencia].nit << endl;
         cout << "DPI:\t\t\t\t"<< reservaciones[coincidencia].dpi << endl;
-        cout << "Telefono:\t\t\t" << reservaciones[coincidencia].telefono << endl;    
+        cout << "Telefono:\t\t\t" << reservaciones[coincidencia].telefono << endl;
+        cout << "Dias de estadia:\t\t"<< reservaciones[coincidencia].dias << endl;    
         cout << "Fecha de Ingreso (DD/MM/AAAA):\t"<< reservaciones[coincidencia].fechaIngreso << endl;
         cout << "Fecha de Salida (DD/MM/AAAA):\t" << reservaciones[coincidencia].fechaSalida << endl;
-        cout << "Dias de estadia:\t\t"<< reservaciones[coincidencia].dias << endl;
         cout << "Cantidad de habitaciones:\t"<< reservaciones[coincidencia].cantidadHabitaciones << endl;
 
         cout << "Habitaciones reservadas:\t";
@@ -280,8 +270,19 @@ int main()
     cargarReservaciones(reservaciones, cantidadReservaciones); // Carga las reservaciones del archivo de texto a un array
 
     do
-    { // loop del menú
-        mostrarMenu();
+    { // loop del menu
+
+
+            system("cls");//texto menu
+    cout << "----- MENU PRINCIPAL -----" << endl
+         << endl;
+    cout << "1. Ingreso de Reservacion" << endl;
+    cout << "2. Busqueda de Reservacion" << endl;
+    cout << "3. Salir" << endl
+         << endl;
+    cout << "Seleccione una opcion: ";
+
+
         cin >> opcion;
 
         switch (opcion)
