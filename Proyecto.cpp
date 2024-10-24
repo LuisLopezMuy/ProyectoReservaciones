@@ -1,4 +1,4 @@
-#include <iostream>//no se está guardando el total
+#include <iostream>
 #include <fstream>
 using namespace std;
 
@@ -29,14 +29,14 @@ void mostrarMenu()
     cout << "Seleccione una opcion: ";
 }
 
-int cargarReservaciones(Reservacion reservaciones[], int &cantidadReservaciones) //    Revisar parametros, revisar si no se puede utilizar un for, revisar si al leer las habitaciones, las lee correctamente
+void cargarReservaciones(Reservacion reservaciones[], int &cantidadReservaciones)
 {
     ifstream archivo("reservaciones.txt");
     cantidadReservaciones = 0;
 
-    while (archivo >> reservaciones[cantidadReservaciones].codigo) //     Lee el código, supongo que si lee void, el while se para         Averiguar como funciona el while, y la lectura por línea
+    while (archivo >> reservaciones[cantidadReservaciones].codigo) //     Evalúa si al leer el codigo de reservacion, tiene exito, si lo tiene, se guarda el codigo y se ejecuta el while, si no, no se ejecuta nada
     {
-        archivo.ignore(); // Ignorar el salto de línea después del código
+        archivo.ignore(); // Para capturar el salto de linea que queda en el buffer, y que no altere los datos
 
         archivo.getline(reservaciones[cantidadReservaciones].nombreCliente, 50);
         archivo.getline(reservaciones[cantidadReservaciones].nit, 15);
@@ -52,12 +52,10 @@ int cargarReservaciones(Reservacion reservaciones[], int &cantidadReservaciones)
             archivo >> reservaciones[cantidadReservaciones].habitaciones[i];
         };
         archivo >> reservaciones[cantidadReservaciones].total;
-        archivo.ignore(); // Ignorar el salto de línea al final de las habitaciones
 
         cantidadReservaciones++;
     }
     archivo.close();
-    return cantidadReservaciones;
 }
 
 void guardarReservaciones(Reservacion reservaciones[], int cantidadReservaciones) 
@@ -275,7 +273,7 @@ void buscar(Reservacion reservaciones[], int cantidadReservaciones)
 
 int main() 
 {
-    Reservacion reservaciones[100];
+    Reservacion reservaciones[101];
     int cantidadReservaciones = 0;
     int opcion;
 
@@ -296,10 +294,10 @@ int main()
             break;
         case 3:
             system("cls");
-            cout << "Fue un gusto atenderle, vuelva pronto" << endl;
+            cout << "Cerrando el programa..." << endl;
             break;
         default:
-            cout << "Opcion no valida, intente de nuevo" << endl;
+            cout << "Ingrese una opcion valida" << endl;
         }
     } while (opcion != 3);
 
